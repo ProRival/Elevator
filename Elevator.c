@@ -55,7 +55,14 @@ task main() {
 	queue.rear = -1;
 	queue.itemCount = 0;
 
-	startTask()
+	//start listening for button pushes asynchronously.
+	startTask(buttonTask);
+
+	while (true) {
+		if (isEmpty(queue)) continue;
+		//TODO: Start elevator.
+	}
+
 }
 
 /*
