@@ -1,6 +1,7 @@
 #pragma config(Sensor, dgtl1,  button1, sensorTouch)
 #pragma config(Sensor, dgtl2,  button2, sensorTouch)
 #pragma config(Sensor, dgtl3,  button3, sensorTouch)
+#pragma config(Sensor, dgtl4,  killSwitch, sensorTouch)
 #pragma config(Sensor, dgtl4,  sonar, sensorSONAR_cm)
 #pragma config(Motor,  port2,  elevatorMotorLeft, tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,  elevatorMotorRight, tmotorVex393_MC29, openLoop)
@@ -29,17 +30,32 @@ int poll(Queue queue);
 
 Queue queue;
 
+task buttonTask() {
+	while (true) {
+		if (SensorValue(killSwitch) == 1) {
+			//TODO: End program.
+			break;
+		}
+
+		if (SensorValue(button1) == 1) {
+			insert(queue, 0);
+		} else if (SensorValue(button2) == 1) {
+			insert(queue, 1);
+		} else if (SensorValue(button3) == 1) {
+			insert(queue, 2);
+		}
+
+	}
+
+}
+
 task main() {
 	//initialize queue data.
 	queue.front = 0;
 	queue.rear = -1;
 	queue.itemCount = 0;
-}
 
-
-task buttonTask() {
-
-
+	startTask()
 }
 
 /*
