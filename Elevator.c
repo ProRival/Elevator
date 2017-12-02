@@ -5,58 +5,102 @@
 #pragma config(Motor,  port2,  elevatorMotorLeft, tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,  elevatorMotorRight, tmotorVex393_MC29, openLoop)
 
-																																						//floor 1: 6.5cm, 19.5cm, 32.5cm
-																																						//function headers
+//Headers for the main program.
 void moveElevator(int floor, int speed);
 void run();
-int getFloor();
-
-int currentFloor = 0;																												//keeps count of the current floor
 
 /**
- * Elevator
- * Author: Kyle Posluns
- *
+ * Creates a Queue struct.
  */
+typedef struct {
+	int intArray[MAX];
+	int front;
+	int rear;
+	int itemCount;
+}Queue;
+
+//Headers for Queue.
+int peek(Queue queue);
+bool isEmpty(Queue queue);
+bool isFull(Queue queue);
+int size(Queue queue);
+void insert(Queue queue, int data);
+int poll(Queue queue);
+
+Queue queue;
+
 task main() {
-	run();																																		//call the run function.
+	//initialize queue data.
+	queue.front = 0;
+	queue.rear = -1;
+	queue.itemCount = 0;
+}
+
+
+task buttonTask() {
+
+
+}
+
+/*
+ * Because RobotC does not contain malloc functions, queues cannot have a dynamic size.
+ */
+#define MAX 6
+
+/**
+ * Returns the front value of the queue without removal.
+ */
+int peek(Queue queue) {
+   return queue.intArray[queue.front];
 }
 
 /**
- * Function to run the program.
- *
+ * Returns true if the queue is empty.
  */
-void run() {
-	int floor = getFloor();																									 	//Check for a floor, then move the elevator.
-	moveElevator(floor, 20);
+bool isEmpty(Queue queue) {
+   return queue.itemCount == 0;
 }
 
 /**
- * Function to get the corresponding floor to the button that was pushed.
+ * Returns true if the queue is full.
  */
-int getFloor() {
-	while (true) { 																														//Test for button pushes.
-		if (SensorValue(button1) == 1) {																				//Tldr; if the button is pressed, return the corresponding floor.
-			return 0;
-		} else if (SensorValue(button2) == 1) {
-			return 1;
-		} else if (SensorValue(button3) == 1) {
-			return 2;
-		}
-	}
-	return -1;
+bool isFull(Queue queue) {
+   return queue.itemCount == MAX;
 }
 
 /**
- * Function to move elevator.
- * @param floor
- * @param speed
+ * Function to get the size of a queue.
  */
-void moveElevator(int floor, int speed) {
-	if (currentFloor == floor || floor < 0 || floor > 2) return;							//checks to see if the elevator is already on the current floor and to make sure the floor is valid.
-	while (SensorValue(sonar) != (32.5 - (13 * floor))) {													//move elevator while the elevator is not on the correct floor.
-		startMotor(elevatorMotorLeft, (floor > currentFloor ? speed : -1 * speed)); //make sure the motor turns the correct direction.
-		startMotor(elevatorMotorRight, (floor > currentFloor ? speed : -1 * speed));
-	}
-	currentFloor = floor;																											//when finished, set the current floor.
+int size(Queue queue) {
+   return queue.itemCount;
+}
+
+/**
+ * Adds data to the end of the queue.
+ */
+void insert(Queue queue, int data) {
+
+   if(!isFull(queue)) {
+
+      if(queue.rear == MAX-1) {
+         queue.rear = -1;
+      }
+
+      queue.intArray[++rear] = data;
+      queue.itemCount++;
+   }
+}
+
+/**
+ * Gets and removes a value from the front of a queue.
+ */
+int poll(Queue queue) {
+   int data = queue.intArray[queue.front++];
+
+   if(queue.front == MAX) {
+      queue.front = 0;
+   }
+
+   queue.itemCount--;
+   return data;
 }
