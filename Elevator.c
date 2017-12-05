@@ -2,7 +2,7 @@
 #pragma config(Sensor, dgtl2,  button2,        sensorTouch)
 #pragma config(Sensor, dgtl3,  button3,        sensorTouch)
 #pragma config(Sensor, dgtl4,  sonar,          sensorSONAR_cm)
-#pragma config(Sensor, dgtl9,  killSwitch,     sensorTouch)
+#pragma config(Sensor, dgtl6,  killSwitch,     sensorTouch)
 #pragma config(Motor,  port3,  elevatorMotor, tmotorVex393_MC29, openLoop)
 
 /*
@@ -60,13 +60,13 @@ task main() {                                  //Main task defined.
 	queue.rear = -1;                        //Set the value of the rear to undefined.
 	queue.itemCount = 0;                      //The item count of the queue is 0 at default since there are no items in the queue.
 
-	currentFloor = 3 + (SensorValue(sonar) / -20);         //Using integer division to determine the starting floor of the elevator.
+	currentFloor = 3 + (SensorValue(sonar) / -15);         //Using integer division to determine the starting floor of the elevator.
 
 	startTask(buttonTask);                     //Start listening for button pushes asynchronously.
 
 	while (true) {                         //Infinite loop, will never terminate.
 		if (isEmpty(queue)) continue;          //If the queue is empty, keep looping.
-		moveElevator(poll(queue), 20);         //At this point, we know there is something in the queue, lets set the elevator to that floor, then remove it from the queue.
+		moveElevator(poll(queue), 50);         //At this point, we know there is something in the queue, lets set the elevator to that floor, then remove it from the queue.
 		waitInMilliseconds(10);             //Prevents the current task from hogging the cpu.
 	}
 
@@ -74,8 +74,8 @@ task main() {                                  //Main task defined.
 
 void moveElevator(int floor, int speed) {                    //Define moveElevator function.
 	if (currentFloor == floor || floor < 0 || floor > 2) return;  //Checks to see if the elevator is already on the current floor and to make sure the floor is valid.
-		while (SensorValue(sonar) != (40 - (20 * floor))) {       //Move elevator while the elevator is not on the correct floor.
-			startMotor(elevatorMotor, (floor < currentFloor ? speed : -speed)); //Make sure the motor turns the correct direction.
+		while (SensorValue(sonar) != (40 - (15 * floor))) {       //Move elevator while the elevator is not on the correct floor.
+			startMotor(elevatorMotor, (floor > currentFloor ? speed : -speed)); //Make sure the motor turns the correct direction.
 		}
 		currentFloor = floor;                       //When finished, set the current floor.
 		stopMotor(elevatorMotor);                     //Stop the motor.
