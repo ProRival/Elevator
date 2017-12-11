@@ -50,7 +50,7 @@ task buttonTask() {                               //Define buttonTask task.
 		insert(queue, 0);        //If button1 is pressed, add floor 1 to the queue.
 	} else if (SensorValue(button2) == 1 || SensorValue(button5)) {     //Check the value of button2 and button5.
 		insert(queue, 1);        //If button2 is pressed, add floor 2 to the queue.
-	} else if (SensorValue(button3) == 1|| SensorValue(button6)) {     //Check the value of button3 and button6.
+	} else if (SensorValue(button3) == 1 || SensorValue(button6)) {     //Check the value of button3 and button6.
 		insert(queue, 2);        //If button3 is pressed, add floor 3 to the queue.
 	}
 		waitInMilliseconds(10);             //Prevents the current task from hogging the cpu.
